@@ -1,3 +1,5 @@
+using stockMarket.Dtos.Comment;
+
 namespace stockMarket.Dtos.Stock
 {
     public class StockDto
@@ -14,6 +16,7 @@ namespace stockMarket.Dtos.Stock
 
         public long MarketCap { get; set; }
 
+        public List<CommentDto> Comments { get; set; }
 
     }
 }
