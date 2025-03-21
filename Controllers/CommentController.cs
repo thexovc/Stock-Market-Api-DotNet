@@ -59,5 +59,37 @@ namespace stockMarket.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = comment.Id }, comment.ToCommentDto());
         }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, UpdateCommentDto commentDto)
+        {
+            // commentDto.UpdateComment(comment);
+            var comment = await _commentRepo.UpdateAsync(id, commentDto.ToCommentFromUpdateDto());
+
+            if (comment == null)
+            {
+                return NotFound("Comment not found");
+            }
+
+            return Ok(comment.ToCommentDto());
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var isDeleted = await _commentRepo.DeleteAsync(id);
+
+            Console.WriteLine("isDeleted", isDeleted);
+
+            if (isDeleted == null)
+            {
+                return NotFound("Comment not found");
+            }
+
+            return NoContent();
+        }
+
     }
 }
