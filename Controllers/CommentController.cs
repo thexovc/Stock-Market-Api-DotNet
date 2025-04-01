@@ -29,7 +29,7 @@ namespace stockMarket.Controllers
             return Ok(commentDtos);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
             var comment = await _commentRepo.GetByIdAsync(id);
@@ -46,7 +46,7 @@ namespace stockMarket.Controllers
 
 
 
-        [HttpPost("{stockId}")]
+        [HttpPost("{stockId:int}")]
         public async Task<IActionResult> Create(int stockId, CreateCommentDto commentDto)
         {
             if (!await _stockRepo.StockExists(stockId))
@@ -61,7 +61,7 @@ namespace stockMarket.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, UpdateCommentDto commentDto)
         {
             // commentDto.UpdateComment(comment);
@@ -75,7 +75,7 @@ namespace stockMarket.Controllers
             return Ok(comment.ToCommentDto());
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
 
