@@ -1,11 +1,12 @@
 using stockMarket.Dtos.Stock;
+using stockMarket.Helpers;
 using stockModel.Models;
 
 namespace stockMarket.Interfaces
 {
     public interface IStockRepository
     {
-        Task<List<Stock>> GetAllAsync();
+        Task<List<Stock>> GetAllAsync(QueryObject query);
 
         Task<Stock> GetByIdAsync(int id);
 
