@@ -45,6 +45,11 @@ namespace stockMarket.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateStockDto stockDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var stock = stockDto.ToStockFromCreateDTO();
 
             await _stockRepo.CreateAsync(stock);
