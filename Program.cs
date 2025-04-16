@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using stockMarket.interfaces;
 using stockMarket.Interfaces;
 using stockMarket.Repository;
+using stockMarket.Service;
 using stockModel.Data;
 using stockModel.Models;
 
@@ -62,6 +63,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
