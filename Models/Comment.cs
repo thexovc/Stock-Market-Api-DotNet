@@ -1,5 +1,9 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace stockModel.Models
 {
+    [Table("Comments")]
+    
     public class Comment
     {
 

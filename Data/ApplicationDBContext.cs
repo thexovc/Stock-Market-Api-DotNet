@@ -16,10 +16,26 @@ namespace stockModel.Data
 
         public DbSet<Comment> Comments { get; set; }
 
+        public DbSet<Portfolio> Portfolios { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Portfolio>()
+                .HasKey(p => new { p.AppUserId, p.StockId });  // Changed from stockId to StockId
+
+            modelBuilder.Entity<Portfolio>()
+                .HasOne(p => p.AppUser)
+                .WithMany(a => a.Portfolios)
+                .HasForeignKey(p => p.AppUserId);
+
+            modelBuilder.Entity<Portfolio>()
+                .HasOne(p => p.Stock)
+                .WithMany(s => s.Portfolios)
+                .HasForeignKey(p => p.StockId);  // Changed from stockId to StockId
+                
 
             List<IdentityRole> roles = new List<IdentityRole>
             {
