@@ -12,7 +12,7 @@ using stockMarket.Extensions;
 
 namespace stockMarket.Controllers
 {
-    [Route("api/stock")]
+    [Route("api/portfolio")]
     [ApiController]
     public class PortfolioController : ControllerBase
     {
