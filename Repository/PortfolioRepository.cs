@@ -9,6 +9,7 @@ namespace stockMarket.Interfaces
     public class PortfolioRepository : IPortfolioRepository
     {
         private readonly ApplicationDBContext _context;
+
         public PortfolioRepository(ApplicationDBContext context)
         {
             _context = context;
@@ -16,19 +17,21 @@ namespace stockMarket.Interfaces
 
         public async Task<List<Stock>> GetUserPortfolio(AppUser user)
         {
-            return await _context.Portfolios
+            if (user == null)
+                return new List<Stock>();
+
+            return await _context
+                .Portfolios.Include(p => p.Stock)
                 .Where(p => p.AppUserId == user.Id)
-                .Select(p => new Stock
-                {
-                    Id = p.StockId,
-                    Symbol = p.Stock.Symbol,
-                    Purchase = p.Stock.Purchase,
-                    MarketCap = p.Stock.MarketCap,
-                    LastDiv = p.Stock.LastDiv,
-                    Industry = p.Stock.Industry,
-                    CompanyName = p.Stock.CompanyName
-                })
+                .Select(p => p.Stock)
                 .ToListAsync();
+        }
+
+        public async Task<Portfolio> CreateAsync(Portfolio portfolio)
+        {
+            await _context.Portfolios.AddAsync(portfolio);
+            await _context.SaveChangesAsync();
+            return portfolio;
         }
     }
 }

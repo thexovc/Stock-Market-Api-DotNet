@@ -97,5 +97,10 @@ namespace stockMarket.Interfaces
         {
             return _context.Stocks.AnyAsync(e => e.Id == id);
         }
+
+        public async Task<Stock> GetStockBySymbol(string symbol)
+        {
+            return await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace stockMarket.Interfaces
 
         Task<Stock> GetByIdAsync(int id);
 
+        Task<Stock> GetStockBySymbol(string symbol);
+
         Task<Stock> CreateAsync(Stock stock);
 
         Task<Stock> UpdateAsync(int id, UpdateStockDto stock);

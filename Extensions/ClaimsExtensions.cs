@@ -6,7 +6,8 @@ namespace stockMarket.Extensions
     {
         public static string GetUsername(this ClaimsPrincipal user)
         {
-            return user?.Claims?.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            return user?.Claims?.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value
+                ?? string.Empty;
         }
     }
 }
