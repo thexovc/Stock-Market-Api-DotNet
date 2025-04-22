@@ -2,12 +2,16 @@ using System.Security.Claims;
 
 namespace stockMarket.Extensions
 {
-    public static class ClaimsExtensions
+    public static class ClaimsPrincipalExtensions
     {
         public static string GetUsername(this ClaimsPrincipal user)
         {
-            return user?.Claims?.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value
-                ?? string.Empty;
+            Console.WriteLine("Claims in user:");
+            foreach (var claim in user.Claims)
+            {
+                Console.WriteLine($"Type: {claim.Type}, Value: {claim.Value}");
+            }
+            return user.FindFirst(ClaimTypes.GivenName)?.Value ?? string.Empty;
         }
     }
 }

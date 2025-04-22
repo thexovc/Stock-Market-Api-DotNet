@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using stockMarket.Dtos.Stock;
 using stockMarket.Extensions;
-using stockMarket.Helpers;
 using stockMarket.Interfaces;
-using stockMarket.Mappers;
-using stockModel.Data;
 using stockModel.Models;
 
 namespace stockMarket.Controllers
@@ -36,6 +31,8 @@ namespace stockMarket.Controllers
         public async Task<IActionResult> GetUserPortfolio()
         {
             var username = User.GetUsername();
+
+            Console.WriteLine(username);
             if (string.IsNullOrEmpty(username))
                 return Unauthorized("User not found");
 

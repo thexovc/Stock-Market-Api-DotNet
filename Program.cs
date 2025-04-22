@@ -30,6 +30,23 @@ builder.Services.AddSwaggerGen(
                 Scheme = "Bearer",
             }
         );
+
+        options.AddSecurityRequirement(
+            new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer",
+                        },
+                    },
+                    Array.Empty<string>()
+                },
+            }
+        );
     }
 );
 
@@ -84,6 +101,32 @@ builder
                 System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
             ),
         };
+
+        // Add this event handler to process the token without "Bearer" prefix
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Headers["Authorization"].ToString();
+                // Console.WriteLine($"\n---- Token Processing ----");
+                // Console.WriteLine($"Raw Authorization header: {accessToken}");
+
+                // If token doesn't start with "Bearer ", assume it's just the token
+                if (!string.IsNullOrEmpty(accessToken) && !accessToken.StartsWith("Bearer "))
+                {
+                    // Console.WriteLine($"Setting token without Bearer prefix: {accessToken}");
+                    context.Token = accessToken;
+                }
+                else
+                {
+                    Console.WriteLine($"Token already has Bearer prefix or is empty");
+                }
+                // Console.WriteLine($"Final token value: {context.Token}");
+                // Console.WriteLine($"------------------------\n");
+
+                return Task.CompletedTask;
+            },
+        };
     });
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
@@ -105,6 +148,38 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// app.Use(
+//     async (context, next) =>
+//     {
+//         Console.WriteLine("\n==== Incoming Request Details ====");
+//         Console.WriteLine($"Path: {context.Request.Path}");
+//         Console.WriteLine($"Method: {context.Request.Method}");
+//         Console.WriteLine("Headers:");
+//         foreach (var header in context.Request.Headers)
+//         {
+//             Console.WriteLine($"  {header.Key}: {header.Value}");
+//         }
+//         // Console.WriteLine("================================\n");
+
+//         await next(); // Continue to the next middleware
+//     }
+// );
+
+// // With this:
+// app.UseCors(x =>
+//     x.WithOrigins("http://localhost:3000", "https://yourdomain.com") // Specify actual origins
+//         .AllowAnyMethod()
+//         .AllowAnyHeader()
+//         .AllowCredentials()
+// );
+
+app.UseCors(x =>
+    x.SetIsOriginAllowed(origin => true) // Be careful with this in production!
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+);
 
 app.UseAuthentication();
 app.UseAuthorization();
