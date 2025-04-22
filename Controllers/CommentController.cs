@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using stockMarket.Dtos.Comment;
+using stockMarket.Extensions;
 using stockMarket.interfaces;
 using stockMarket.Interfaces;
 using stockMarket.Mappers;
+using stockModel.Models;
 
 namespace stockMarket.Controllers
 {
@@ -12,11 +16,17 @@ namespace stockMarket.Controllers
     {
         private readonly ICommentRepository _commentRepo;
         private readonly IStockRepository _stockRepo;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepo)
+        public CommentController(
+            ICommentRepository commentRepo,
+            IStockRepository stockRepo,
+            UserManager<AppUser> userManager
+        )
         {
             _commentRepo = commentRepo;
             _stockRepo = stockRepo;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -44,8 +54,7 @@ namespace stockMarket.Controllers
             return Ok(commentDto);
         }
 
-
-
+        [Authorize]
         [HttpPost("{stockId:int}")]
         public async Task<IActionResult> Create(int stockId, CreateCommentDto commentDto)
         {
@@ -54,12 +63,22 @@ namespace stockMarket.Controllers
                 return BadRequest("Stock does not exist");
             }
 
-            var comment = commentDto.ToCommentFromCreateDto(stockId);
-            await _commentRepo.CreateAsync(comment);
+            var username = User.GetUsername();
 
-            return CreatedAtAction(nameof(GetById), new { id = comment.Id }, comment.ToCommentDto());
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            var commentModel = commentDto.ToCommentFromCreateDto(stockId);
+
+            commentModel.AppUserId = appUser.Id;
+
+            await _commentRepo.CreateAsync(commentModel);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = commentModel.Id },
+                commentModel.ToCommentDto()
+            );
         }
-
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, UpdateCommentDto commentDto)
@@ -78,7 +97,6 @@ namespace stockMarket.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-
             var isDeleted = await _commentRepo.DeleteAsync(id);
 
             Console.WriteLine("isDeleted", isDeleted);
@@ -90,6 +108,5 @@ namespace stockMarket.Controllers
 
             return NoContent();
         }
-
     }
 }

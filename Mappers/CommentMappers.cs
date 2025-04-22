@@ -13,7 +13,8 @@ namespace stockMarket.Mappers
                 Title = commentModel.Title,
                 Content = commentModel.Content,
                 CreateOn = commentModel.CreateOn,
-                StockId = commentModel.StockId
+                StockId = commentModel.StockId,
+                CreatedBy = commentModel.AppUser.UserName,
             };
         }
 
@@ -23,18 +24,13 @@ namespace stockMarket.Mappers
             {
                 Title = commentDto.Title,
                 Content = commentDto.Content,
-                StockId = stockId
+                StockId = stockId,
             };
         }
 
         public static Comment ToCommentFromUpdateDto(this UpdateCommentDto commentDto)
         {
-            return new Comment
-            {
-                Title = commentDto.Title,
-                Content = commentDto.Content
-            };
-
+            return new Comment { Title = commentDto.Title, Content = commentDto.Content };
         }
     }
 }

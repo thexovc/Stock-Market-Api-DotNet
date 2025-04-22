@@ -14,6 +14,7 @@ namespace stockMarket.Controllers
     {
         private readonly ApplicationDBContext _context;
         private readonly IStockRepository _stockRepo;
+
         public StockController(ApplicationDBContext context, IStockRepository stockRepo)
         {
             _stockRepo = stockRepo;
@@ -25,7 +26,7 @@ namespace stockMarket.Controllers
         {
             var stocks = await _stockRepo.GetAllAsync(query);
 
-            var stockDto = stocks.Select(s => s.ToStockDto());
+            var stockDto = stocks.Select(s => s.ToStockDto()).ToList();
 
             return Ok(stocks);
         }
@@ -68,10 +69,8 @@ namespace stockMarket.Controllers
                 return NotFound();
             }
 
-
             return Ok(stockModel.ToStockDto());
         }
-
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
@@ -85,6 +84,5 @@ namespace stockMarket.Controllers
 
             return NoContent();
         }
-
     }
 }

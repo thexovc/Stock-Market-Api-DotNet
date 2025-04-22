@@ -21,15 +21,16 @@ namespace stockMarket.Repository
             return commentModel;
         }
 
-
         public async Task<List<Comment>> GetAllAsync()
         {
-            return await _context.Comments.ToListAsync();
+            return await _context.Comments.Include(c => c.AppUser).ToListAsync();
         }
 
         public async Task<Comment?> GetByIdAsync(int id)
         {
-            return await _context.Comments.FindAsync(id);
+            return await _context
+                .Comments.Include(c => c.AppUser)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Comment?> UpdateAsync(int id, Comment commentModel)
